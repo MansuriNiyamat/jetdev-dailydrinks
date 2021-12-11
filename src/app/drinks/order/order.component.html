@@ -1,0 +1,83 @@
+<nz-card [nzTitle]="title" [nzExtra]="extraTemplate">
+    <!-- Table -->
+    <nz-table #basicTable [nzData]="listData">
+        <thead>
+            <tr>
+                <th>STATUS</th>
+                <th>Item</th>
+                <th>Price</th>
+                <th>Notes</th>
+                <th>EDIT / DELETE</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>{{ data.status  }}</td>
+                <td>{{ data.item }}</td>
+                <td>{{ data.price}}</td>
+                <td>{{ data.note}}</td>
+                <td>
+                    <button nz-button nzType="default" nzSize="medium" nz-tooltip nzTooltipPlacement="left"
+                        (click)="editRecord(data.id)" nzTooltipTitle="Edit">
+                        <i nz-icon nzType="edit"></i>
+                    </button>
+                    <nz-divider nzType="vertical"></nz-divider>
+                    <button nz-button nzType="default" nzSize="medium" nz-tooltip nzTooltipPlacement="left"
+                        (click)="deleteRecord(data.id)" nzTooltipTitle="Delete">
+                        <i nz-icon nzType="delete"></i>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </nz-table>
+
+</nz-card>
+
+
+<ng-template #extraTemplate>
+    <button nz-button nzType="primary" nzSize="large" nzShape="circle" nz-tooltip nzTooltipPlacement="left"
+        (click)="createRecord()" nzTooltipTitle="Create">
+        New Order
+    </button>
+</ng-template>
+
+<!-- Input form modal -->
+<nz-modal [(nzVisible)]="isVisible" [nzTitle]="modalTitle" (nzOnCancel)="handleCancel()" [nzContent]="modalContent"
+    [nzFooter]="modalFooter">
+    <ng-template #modalTitle>{{modTitle}}</ng-template>
+    <ng-template #modalContent>
+
+        <form nz-form [formGroup]="inForm">
+            <nz-form-item>
+                <nz-form-label  nzRequired>Item name</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback  [nzErrorTip]="itemErrorTpl">
+                  <input nz-input formControlName="item" placeholder="order item" />
+                  <ng-template #itemErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">Please input your item!</ng-container>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+              <nz-form-item>
+                <nz-form-label  nzRequired>Price</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzHasFeedback [nzErrorTip]="priceErrorTpl">
+                    <nz-input-number formControlName="price"  [nzMin]="1"  [nzStep]="1"></nz-input-number>
+                  <ng-template #priceErrorTpl let-control>
+                    <ng-container *ngIf="control.hasError('required')">Please input your price!</ng-container>
+                  </ng-template>
+                </nz-form-control>
+              </nz-form-item>
+            <nz-form-item>
+                <nz-form-label >Note</nz-form-label>
+                <nz-form-control [nzSpan]="12" nzErrorTip="Please write Item name!">
+                  <textarea formControlName="note" nz-input rows="2" placeholder="Aditional Note"></textarea>
+                </nz-form-control>
+              </nz-form-item>
+        </form>
+    </ng-template>
+    <ng-template #modalFooter>
+        <button nz-button nzType="default" (click)="handleCancel()">Cancel</button>
+        <button nz-button nzType="primary" [disabled]="!inForm.valid" (click)="submitForm()">Save</button>
+    </ng-template>
+</nz-modal>
+
+
